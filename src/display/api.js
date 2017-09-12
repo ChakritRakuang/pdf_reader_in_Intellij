@@ -17,8 +17,8 @@ import { PDFDataTransportStream } from './transport_stream';
 
 var DEFAULT_RANGE_CHUNK_SIZE = 65536; // 2^16 = 65536
 
-var isWorkerDisabled = false;
-var workerSrc;
+let isWorkerDisabled = false;
+let workerSrc;
 var isPostMessageTransfersDisabled = false;
 
 var pdfjsFilePath =
@@ -27,8 +27,8 @@ var pdfjsFilePath =
   typeof document !== 'undefined' && document.currentScript ?
     document.currentScript.src : null;
 
-var fakeWorkerFilesLoader = null;
-var useRequireEnsure = false;
+let fakeWorkerFilesLoader = null;
+let useRequireEnsure = false;
 if (typeof PDFJSDev !== 'undefined' &&
     PDFJSDev.test('GENERIC && !SINGLE_FILE')) {
   // For GENERIC build we need add support of different fake file loaders
@@ -51,8 +51,8 @@ if (typeof PDFJSDev !== 'undefined' &&
     typeof requirejs !== 'undefined' && requirejs.load;
   fakeWorkerFilesLoader = useRequireEnsure ? (function (callback) {
     __non_webpack_require__.ensure([], function () {
-      var worker;
-      if (typeof PDFJSDev !== 'undefined' && PDFJSDev.test('LIB')) {
+        let worker;
+        if (typeof PDFJSDev !== 'undefined' && PDFJSDev.test('LIB')) {
         worker = __non_webpack_require__('../pdf.worker.js');
       } else {
         worker = __non_webpack_require__('./pdf.worker.js');
@@ -67,7 +67,7 @@ if (typeof PDFJSDev !== 'undefined' &&
 }
 
 /** @type IPDFStream */
-var PDFNetworkStream;
+let PDFNetworkStream;
 
 /**
  * Sets PDFNetworkStream class to be used as alternative PDF data transport.
@@ -184,8 +184,8 @@ function getDocument(src, pdfDataRangeTransport,
   task.onPassword = passwordCallback || null;
   task.onProgress = progressCallback || null;
 
-  var source;
-  if (typeof src === 'string') {
+    let source;
+    if (typeof src === 'string') {
     source = { url: src, };
   } else if (isArrayBuffer(src)) {
     source = { data: src, };
@@ -222,8 +222,8 @@ function getDocument(src, pdfDataRangeTransport,
       continue;
     } else if (key === 'data' && !(source[key] instanceof Uint8Array)) {
       // Converting string or array-like data to Uint8Array.
-      var pdfBytes = source[key];
-      if (typeof pdfBytes === 'string') {
+        let pdfBytes = source[key];
+        if (typeof pdfBytes === 'string') {
         params[key] = stringToBytes(pdfBytes);
       } else if (typeof pdfBytes === 'object' && pdfBytes !== null &&
                  !isNaN(pdfBytes.length)) {
@@ -291,9 +291,8 @@ function getDocument(src, pdfDataRangeTransport,
 
       var messageHandler = new MessageHandler(docId, workerId, worker.port);
       messageHandler.postMessageTransfers = worker.postMessageTransfers;
-      var transport = new WorkerTransport(messageHandler, task, networkStream,
-                                          CMapReaderFactory);
-      task._transport = transport;
+            task._transport = new WorkerTransport(messageHandler, task, networkStream,
+          CMapReaderFactory);
       messageHandler.send('Ready', null);
     });
   }).catch(task._capability.reject);
@@ -355,9 +354,9 @@ function _fetchDocument(worker, source, pdfDataRangeTransport, docId) {
  * @alias PDFDocumentLoadingTask
  */
 var PDFDocumentLoadingTask = (function PDFDocumentLoadingTaskClosure() {
-  var nextDocumentId = 0;
+    let nextDocumentId = 0;
 
-  /** @constructs PDFDocumentLoadingTask */
+    /** @constructs PDFDocumentLoadingTask */
   function PDFDocumentLoadingTask() {
     this._capability = createPromiseCapability();
     this._transport = null;
@@ -476,7 +475,8 @@ var PDFDataRangeTransport = (function pdfDataRangeTransportClosure() {
 
     onDataRange: function PDFDataRangeTransport_onDataRange(begin, chunk) {
       var listeners = this._rangeListeners;
-      for (var i = 0, n = listeners.length; i < n; ++i) {
+        let i = 0, n = listeners.length;
+        for (; i < n; ++i) {
         listeners[i](begin, chunk);
       }
     },
@@ -484,7 +484,8 @@ var PDFDataRangeTransport = (function pdfDataRangeTransportClosure() {
     onDataProgress: function PDFDataRangeTransport_onDataProgress(loaded) {
       this._readyCapability.promise.then(() => {
         var listeners = this._progressListeners;
-        for (var i = 0, n = listeners.length; i < n; ++i) {
+          let i = 0, n = listeners.length;
+          for (; i < n; ++i) {
           listeners[i](loaded);
         }
       });
@@ -494,7 +495,8 @@ var PDFDataRangeTransport = (function pdfDataRangeTransportClosure() {
         function PDFDataRangeTransport_onDataProgress(chunk) {
       this._readyCapability.promise.then(() => {
         var listeners = this._progressiveReadListeners;
-        for (var i = 0, n = listeners.length; i < n; ++i) {
+          let i = 0, n = listeners.length;
+          for (; i < n; ++i) {
           listeners[i](chunk);
         }
       });
@@ -937,7 +939,9 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
      *   object that represents page's operator list.
      */
     getOperatorList: function PDFPageProxy_getOperatorList() {
-      function operatorListChanged() {
+      let opListTask;
+
+        function operatorListChanged() {
         if (intentState.operatorList.lastChunk) {
           intentState.opListReadCapability.resolve(intentState.operatorList);
 
@@ -953,9 +957,8 @@ var PDFPageProxy = (function PDFPageProxyClosure() {
         this.intentStates[renderingIntent] = Object.create(null);
       }
       var intentState = this.intentStates[renderingIntent];
-      var opListTask;
 
-      if (!intentState.opListReadCapability) {
+        if (!intentState.opListReadCapability) {
         opListTask = {};
         opListTask.operatorListChanged = operatorListChanged;
         intentState.receivingOperatorList = true;
@@ -1150,9 +1153,9 @@ class LoopbackPort {
       if (cloned.has(value)) { // already cloned the object
         return cloned.get(value);
       }
-      var result;
-      var buffer;
-      if ((buffer = value.buffer) && isArrayBuffer(buffer)) {
+        let result;
+        let buffer;
+        if ((buffer = value.buffer) && isArrayBuffer(buffer)) {
         // We found object with ArrayBuffer (typed array).
         var transferable = transfers && transfers.indexOf(buffer) >= 0;
         if (value === buffer) {
@@ -1172,8 +1175,8 @@ class LoopbackPort {
       // Cloning all value and object properties, however ignoring properties
       // defined via getter.
       for (var i in value) {
-        var desc, p = value;
-        while (!(desc = Object.getOwnPropertyDescriptor(p, i))) {
+          let desc, p = value;
+          while (!(desc = Object.getOwnPropertyDescriptor(p, i))) {
           p = Object.getPrototypeOf(p);
         }
         if (typeof desc.value === 'undefined' ||
@@ -1488,8 +1491,7 @@ var PDFWorker = (function PDFWorkerClosure() {
         var workerHandler = new MessageHandler(id + '_worker', id, port);
         WorkerMessageHandler.setup(workerHandler, port);
 
-        var messageHandler = new MessageHandler(id, id + '_worker', port);
-        this._messageHandler = messageHandler;
+        this._messageHandler = new MessageHandler(id, id + '_worker', port);
         this._readyCapability.resolve();
       });
     },
@@ -1788,8 +1790,8 @@ var WorkerTransport = (function WorkerTransportClosure() {
               this.commonObjs.resolve(id, exportedError);
               break;
             }
-            var fontRegistry = null;
-            if (getDefaultSetting('pdfBug') && globalScope.FontInspector &&
+              let fontRegistry = null;
+              if (getDefaultSetting('pdfBug') && globalScope.FontInspector &&
                 globalScope['FontInspector'].enabled) {
               fontRegistry = {
                 registerFont(font, url) {

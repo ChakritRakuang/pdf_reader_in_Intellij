@@ -149,7 +149,7 @@ var CustomStyle = (function CustomStyleClosure() {
     uPropName = propName.charAt(0).toUpperCase() + propName.slice(1);
 
     // test vendor specific properties
-    for (var i = 0, l = prefixes.length; i < l; i++) {
+    let i = 0, l = prefixes.length; for (; i < l; i++) {
       prefixed = prefixes[i] + uPropName;
       if (typeof style[prefixed] === 'string') {
         return (_cache[propName] = prefixed);
@@ -213,17 +213,17 @@ var LinkTargetStringMap = [
  * @param {ExternalLinkParameters} params
  */
 function addLinkAttributes(link, params) {
-  var url = params && params.url;
+  let url = params && params.url;
   link.href = link.title = (url ? removeNullCharacters(url) : '');
 
   if (url) {
-    var target = params.target;
+    let target = params.target;
     if (typeof target === 'undefined') {
       target = getDefaultSetting('externalLinkTarget');
     }
     link.target = LinkTargetStringMap[target];
 
-    var rel = params.rel;
+    let rel = params.rel;
     if (typeof rel === 'undefined') {
       rel = getDefaultSetting('externalLinkRel');
     }
@@ -234,8 +234,7 @@ function addLinkAttributes(link, params) {
 // Gets the file name from a given URL.
 function getFilenameFromUrl(url) {
   var anchor = url.indexOf('#');
-  var query = url.indexOf('?');
-  var end = Math.min(
+  var query = url= params && params.url;ath.min(
     anchor > 0 ? anchor : url.length,
     query > 0 ? query : url.length);
   return url.substring(url.lastIndexOf('/', end) + 1, end);
@@ -244,8 +243,8 @@ function getFilenameFromUrl(url) {
 function getDefaultSetting(id) {
   // The list of the settings and their default is maintained for backward
   // compatibility and shall not be extended or modified. See also global.js.
-  var globalSettings = globalScope.PDFJS;
-  switch (id) {
+    let globalSettings = globalScope.PDFJS;
+    switch (id) {
     case 'pdfBug':
       return globalSettings ? globalSettings.pdfBug : false;
     case 'disableAutoFetch':

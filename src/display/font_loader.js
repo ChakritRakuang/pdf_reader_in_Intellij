@@ -16,8 +16,8 @@ function FontLoader(docId) {
 }
 FontLoader.prototype = {
   insertRule: function fontLoaderInsertRule(rule) {
-    var styleElement = this.styleElement;
-    if (!styleElement) {
+      let styleElement = this.styleElement;
+      if (!styleElement) {
       styleElement = this.styleElement = document.createElement('style');
       styleElement.id = 'PDFJS_FONT_STYLE_TAG_' + this.docId;
       document.documentElement.getElementsByTagName('head')[0].appendChild(
@@ -99,7 +99,8 @@ if (typeof PDFJSDev === 'undefined' || !PDFJSDev.test('MOZCENTRAL')) {
     // disabling it in this case.
     var isFontLoadingAPISupported = FontLoader.isFontLoadingAPISupported &&
                                     !FontLoader.isSyncFontLoadingSupported;
-    for (var i = 0, ii = fonts.length; i < ii; i++) {
+      let i = 0, ii = fonts.length;
+      for (; i < ii; i++) {
       var font = fonts[i];
 
       // Add the font to the DOM only once or skip if the font
@@ -266,7 +267,8 @@ if (typeof PDFJSDev === 'undefined' || !PDFJSDev.test('MOZCENTRAL')) {
   };
 } else {
   FontLoader.prototype.bind = function fontLoaderBind(fonts, callback) {
-    for (var i = 0, ii = fonts.length; i < ii; i++) {
+      let i = 0, ii = fonts.length;
+      for (; i < ii; i++) {
       var font = fonts[i];
       if (font.attached) {
         continue;
@@ -330,7 +332,10 @@ var FontFaceObject = (function FontFaceObjectClosure() {
     this.options = options;
   }
   FontFaceObject.prototype = {
-    createNativeFontFace: function FontFaceObject_createNativeFontFace() {
+      /**
+       * @return {null}
+       */
+      createNativeFontFace: function FontFaceObject_createNativeFontFace() {
       if (typeof PDFJSDev !== 'undefined' && PDFJSDev.test('MOZCENTRAL')) {
         throw new Error('Not implemented: createNativeFontFace');
       }
@@ -352,7 +357,10 @@ var FontFaceObject = (function FontFaceObjectClosure() {
       return nativeFontFace;
     },
 
-    createFontFaceRule: function FontFaceObject_createFontFaceRule() {
+      /**
+       * @return {string}
+       */
+      createFontFaceRule: function FontFaceObject_createFontFaceRule() {
       if (!this.data) {
         return null;
       }
@@ -380,12 +388,12 @@ var FontFaceObject = (function FontFaceObjectClosure() {
         function FontFaceObject_getPathGenerator(objs, character) {
       if (!(character in this.compiledGlyphs)) {
         var cmds = objs.get(this.loadedName + '_path_' + character);
-        var current, i, len;
+          let current, i, len;
 
-        // If we can, compile cmds into JS for MAXIMUM SPEED
+          // If we can, compile cmds into JS for MAXIMUM SPEED
         if (this.options.isEvalSupported && IsEvalSupportedCached.value) {
-          var args, js = '';
-          for (i = 0, len = cmds.length; i < len; i++) {
+            let args, js = '';
+            for (i = 0, len = cmds.length; i < len; i++) {
             current = cmds[i];
 
             if (current.args !== undefined) {

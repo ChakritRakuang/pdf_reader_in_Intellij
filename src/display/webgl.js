@@ -1,19 +1,3 @@
-/* Copyright 2014 Mozilla Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/* eslint-disable no-multi-str */
-
 import { getDefaultSetting } from './dom_utils';
 import { shadow } from '../shared/util';
 
@@ -22,8 +6,8 @@ var WebGLUtils = (function WebGLUtilsClosure() {
     var shader = gl.createShader(shaderType);
     gl.shaderSource(shader, code);
     gl.compileShader(shader);
-    var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-    if (!compiled) {
+      let compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+      if (!compiled) {
       var errorMsg = gl.getShaderInfoLog(shader);
       throw new Error('Error during shader compilation: ' + errorMsg);
     }
@@ -37,7 +21,8 @@ var WebGLUtils = (function WebGLUtilsClosure() {
   }
   function createProgram(gl, shaders) {
     var program = gl.createProgram();
-    for (var i = 0, ii = shaders.length; i < ii; ++i) {
+      let i = 0, ii = shaders.length;
+      for (; i < ii; ++i) {
       gl.attachShader(program, shaders[i]);
     }
     gl.linkProgram(program);
@@ -64,8 +49,9 @@ var WebGLUtils = (function WebGLUtilsClosure() {
     return texture;
   }
 
-  var currentGL, currentCanvas;
-  function generateGL() {
+    let currentGL, currentCanvas;
+
+    function generateGL() {
     if (currentGL) {
       return;
     }
@@ -120,12 +106,12 @@ var WebGLUtils = (function WebGLUtilsClosure() {
     gl_FragColor = imageColor;                                  \
   }                                                             ';
 
-  var smaskCache = null;
+    let smaskCache = null;
 
-  function initSmaskGL() {
-    var canvas, gl;
+    function initSmaskGL() {
+      let canvas, gl;
 
-    generateGL();
+      generateGL();
     canvas = currentCanvas;
     currentCanvas = null;
     gl = currentGL;
@@ -193,7 +179,6 @@ var WebGLUtils = (function WebGLUtilsClosure() {
     var texture = createTexture(gl, layer, gl.TEXTURE0);
     var maskTexture = createTexture(gl, mask, gl.TEXTURE1);
 
-
     // Create a buffer and put a single clipspace rectangle in
     // it (2 triangles)
     var buffer = gl.createBuffer();
@@ -252,12 +237,12 @@ var WebGLUtils = (function WebGLUtilsClosure() {
     gl_FragColor = v_color;                                     \
   }                                                             ';
 
-  var figuresCache = null;
+    let figuresCache = null;
 
-  function initFiguresGL() {
-    var canvas, gl;
+    function initFiguresGL() {
+      let canvas, gl;
 
-    generateGL();
+      generateGL();
     canvas = currentCanvas;
     currentCanvas = null;
     gl = currentGL;
@@ -294,8 +279,8 @@ var WebGLUtils = (function WebGLUtilsClosure() {
 
     // count triangle points
     var count = 0;
-    var i, ii, rows;
-    for (i = 0, ii = figures.length; i < ii; i++) {
+      let i, ii, rows;
+      for (i = 0, ii = figures.length; i < ii; i++) {
       switch (figures[i].type) {
         case 'lattice':
           rows = (figures[i].coords.length / figures[i].verticesPerRow) | 0;
@@ -317,9 +302,9 @@ var WebGLUtils = (function WebGLUtilsClosure() {
         case 'lattice':
           var cols = figure.verticesPerRow;
           rows = (ps.length / cols) | 0;
-          for (var row = 1; row < rows; row++) {
+          for (let row = 1; row < rows; row++) {
             var offset = row * cols + 1;
-            for (var col = 1; col < cols; col++, offset++) {
+            for (let col = 1; col < cols; col++, offset++) {
               coords[pIndex] = coordsMap[ps[offset - cols - 1]];
               coords[pIndex + 1] = coordsMap[ps[offset - cols - 1] + 1];
               coords[pIndex + 2] = coordsMap[ps[offset - cols]];
@@ -357,7 +342,8 @@ var WebGLUtils = (function WebGLUtilsClosure() {
           }
           break;
         case 'triangles':
-          for (var j = 0, jj = ps.length; j < jj; j++) {
+            let j = 0, jj = ps.length;
+            for (; j < jj; j++) {
             coords[pIndex] = coordsMap[ps[j]];
             coords[pIndex + 1] = coordsMap[ps[j] + 1];
             colors[cIndex] = colorsMap[cs[j]];
@@ -423,8 +409,8 @@ var WebGLUtils = (function WebGLUtilsClosure() {
       if (getDefaultSetting('disableWebGL')) {
         return false;
       }
-      var enabled = false;
-      try {
+        let enabled = false;
+        try {
         generateGL();
         enabled = !!currentGL;
       } catch (e) { }
